@@ -134,24 +134,17 @@
 
         // Tato funkce ukrývá výpočty, rozluštit to ze zdrojáku je pro běžného kačera velmi těžké
         function calculateCoordinates() {
-            // Vzorové hodnoty. Tyto složité rovnice po vyřešení JS enginem dají konkrétní celá čísla.
-            
-            // Příklad výpočtu pro A = 5
+      
             const A = Math.round(Math.abs(Math.cos(Math.PI / 3) * 10)); 
             
-            // Příklad výpočtu pro B = 8
             const B = parseInt("1000", 2) * Math.cos(0);
             
-            // Příklad výpočtu pro C = 2
             const C = Math.ceil(Math.log2(256) / 4);
             
-            // Příklad výpočtu pro D = 0
             const D = Math.abs(Math.round(Math.sin(Math.PI)));
             
-            // Příklad výpočtu pro E = 7
             const E = Math.floor(Math.sqrt(62));
             
-            // Příklad výpočtu pro F = 3
             const F = Math.round((Math.sin(Math.PI / 2) * 15) % 4);
 
             return { A, B, C, D, E, F };
