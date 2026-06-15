@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tajemný terminál</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #0f0;
+            font-family: 'Courier New', Courier, monospace;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            user-select: none;
+        }
+        h1 { margin-bottom: 5px; text-shadow: 0 0 5px #0f0; }
+        p { margin-bottom: 20px; max-width: 400px; text-align: center; }
+        #game-board {
+            display: grid;
+            grid-template-columns: repeat(5, 50px);
+            gap: 5px;
+            margin-bottom: 30px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: #222;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cell.on {
+            background-color: #0f0;
+            box-shadow: 0 0 15px #0f0;
+        }
+        #result {
+            display: none;
+            text-align: center;
+            font-size: 1.2em;
+            background: #000;
+            padding: 20px;
+            border: 2px dashed #0f0;
+            border-radius: 10px;
+        }
+        .value-box {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-top: 10px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>TERMINÁL UZAMČEN</h1>
+    <p>Pro získání přístupových kódů zhasni všechna světla na panelu. Kliknutím přepneš stav buňky a jejích sousedů.</p>
+
+    <div id="game-board"></div>
+
+    <div id="result">
+        <div>SYSTÉM ODBLOKOVÁN. DEŠIFRUJI KÓDY...</div>
+        <div class="value-box" id="final-values"></div>
+    </div>
+
+    <script>
+        const size = 5;
+        let board = [];
+        let gameWon = false;
+
+        // Vytvoření herní plochy
+        function initGame() {
+            const boardElement = document.getElementById('game-board');
+            boardElement.innerHTML = '';
+            board = Array(size).fill().map(() => Array(size).fill(false));
+
+            // Simulace náhodných tahů pro vytvoření řešitelné, ale těžké hry (15 tahů)
+            for(let i = 0; i < 15; i++) {
+                let rx = Math.floor(Math.random() * size);
+                let ry = Math.floor(Math.random() * size);
+                toggleInternal(rx, ry);
+            }
+
+            // Pokud by náhodou vznikla vyřešená plocha rovnou, zkusíme to znovu
+            if (checkWinCondition()) return initGame();
+
+            renderBoard();
+        }
+
+        // Fyzika přepínání
+        function toggleInternal(x, y) {
+            const dirs = [[0,0], [1,0], [-1,0], [0,1], [0,-1]];
+            dirs.forEach(([dx, dy]) => {
+                let nx = x + dx, ny = y + dy;
+                if(nx >= 0 && nx < size && ny >= 0 && ny < size) {
+                    board[ny][nx] = !board[ny][nx];
+                }
+            });
+        }
+
+        // Kliknutí hráčem
+        function handleCellClick(x, y) {
+            if (gameWon) return;
+            toggleInternal(x, y);
+            renderBoard();
+            
+            if (checkWinCondition()) {
+                gameWon = true;
+                showResults();
+            }
+        }
+
+        // Vykreslení do HTML
+        function renderBoard() {
+            const boardElement = document.getElementById('game-board');
+            boardElement.innerHTML = '';
+            for (let y = 0; y < size; y++) {
+                for (let x = 0; x < size; x++) {
+                    const cell = document.createElement('div');
+                    cell.className = 'cell' + (board[y][x] ? ' on' : '');
+                    cell.onclick = () => handleCellClick(x, y);
+                    boardElement.appendChild(cell);
+                }
+            }
+        }
+
+        function checkWinCondition() {
+            return board.every(row => row.every(cell => !cell));
+        }
+
+        // Tato funkce ukrývá výpočty, rozluštit to ze zdrojáku je pro běžného kačera velmi těžké
+        function calculateCoordinates() {
+            // Vzorové hodnoty. Tyto složité rovnice po vyřešení JS enginem dají konkrétní celá čísla.
+            
+            // Příklad výpočtu pro A = 5
+            const A = Math.round(Math.abs(Math.cos(Math.PI / 3) * 10)); 
+            
+            // Příklad výpočtu pro B = 8
+            const B = parseInt("1000", 2) * Math.cos(0);
+            
+            // Příklad výpočtu pro C = 2
+            const C = Math.ceil(Math.log2(256) / 4);
+            
+            // Příklad výpočtu pro D = 0
+            const D = Math.abs(Math.round(Math.sin(Math.PI)));
+            
+            // Příklad výpočtu pro E = 7
+            const E = Math.floor(Math.sqrt(62));
+            
+            // Příklad výpočtu pro F = 3
+            const F = Math.round((Math.sin(Math.PI / 2) * 15) % 4);
+
+            return { A, B, C, D, E, F };
+        }
+
+        function showResults() {
+            document.getElementById('game-board').style.opacity = '0.3';
+            const res = calculateCoordinates();
+            const resDiv = document.getElementById('result');
+            const valuesDiv = document.getElementById('final-values');
+            
+            resDiv.style.display = 'block';
+            valuesDiv.innerHTML = `A=${res.A} B=${res.B} C=${res.C} D=${res.D} E=${res.E} F=${res.F}`;
+        }
+
+        // Spuštění
+        initGame();
+    </script>
+</body>
+</html>
+
