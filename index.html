@@ -72,21 +72,29 @@
         let board = [];
         let gameWon = false;
 
-        // Vytvoření herní plochy
         function initGame() {
             const boardElement = document.getElementById('game-board');
             boardElement.innerHTML = '';
+            
+            // Reset stavů pro případný restart hry
+            gameWon = false;
+            boardElement.style.opacity = '1';
+            document.getElementById('result').style.display = 'none';
+
+            // Inicializace prázdné (vypnuté) desky
             board = Array(size).fill().map(() => Array(size).fill(false));
 
-            // Simulace náhodných tahů pro vytvoření řešitelné, ale těžké hry (15 tahů)
-            for(let i = 0; i < 15; i++) {
+            // Simulace náhodných tahů (30 tahů) - zaručuje 100% řešitelnost
+            for(let i = 0; i < 30; i++) {
                 let rx = Math.floor(Math.random() * size);
                 let ry = Math.floor(Math.random() * size);
                 toggleInternal(rx, ry);
             }
 
-            // Pokud by náhodou vznikla vyřešená plocha rovnou, zkusíme to znovu
-            if (checkWinCondition()) return initGame();
+            // Ošetření rekurze pomocí return
+            if (checkWinCondition()) {
+                return initGame(); 
+            }
 
             renderBoard();
         }
@@ -133,17 +141,11 @@
         }
 
         function calculateCoordinates() {
-      
             const A = Math.round(Math.abs(Math.cos(Math.PI / 3) * 10)); 
-            
             const B = parseInt("1000", 2) * Math.cos(0);
-            
             const C = Math.ceil(Math.log2(256) / 4);
-            
             const D = Math.abs(Math.round(Math.sin(Math.PI)));
-            
             const E = Math.floor(Math.sqrt(62));
-            
             const F = Math.round((Math.sin(Math.PI / 2) * 15) % 4);
 
             return { A, B, C, D, E, F };
@@ -159,9 +161,8 @@
             valuesDiv.innerHTML = `A=${res.A} B=${res.B} C=${res.C} D=${res.D} E=${res.E} F=${res.F}`;
         }
 
-        // Spuštění
+        // Spuštění hry
         initGame();
     </script>
 </body>
 </html>
-
